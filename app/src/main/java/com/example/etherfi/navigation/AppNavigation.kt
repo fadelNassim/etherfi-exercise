@@ -2,11 +2,12 @@ package com.example.etherfi.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.example.auth.ui.screens.SignInScreen
+import com.example.signin.ui.screens.SignInScreen
 import com.example.home.ui.screens.HomeScreen
+import com.walletconnect.web3.modal.ui.web3ModalGraph
 
 sealed class Screen(val route: String) {
     data object HomeScreen : Screen("home_screen")
@@ -14,14 +15,14 @@ sealed class Screen(val route: String) {
 }
 
 @Composable
-fun AppNavigation(appPadding: PaddingValues) {
-    val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Screen.HomeScreen.route) {
+fun AppNavigation(appPadding: PaddingValues, navController: NavHostController) {
+    NavHost(navController = navController, startDestination = Screen.SignInScreen.route) {
         composable(Screen.HomeScreen.route) {
             HomeScreen(appPadding)
         }
+        web3ModalGraph(navController)
         composable(Screen.SignInScreen.route) {
-            SignInScreen(appPadding)
+            SignInScreen(appPadding, navController)
         }
     }
 }

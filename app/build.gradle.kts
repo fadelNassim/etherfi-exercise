@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.etherfi"
-        minSdk = 24
+        minSdk = 23
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -32,11 +32,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
     buildFeatures {
         compose = true
@@ -74,4 +74,9 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
+    implementation(platform(libs.android.bom))
+    implementation(libs.android.core)
+    implementation(libs.web3modal)
+    implementation(libs.androidx.material)
+    implementation("com.google.accompanist:accompanist-navigation-material:0.35.1-alpha")
 }

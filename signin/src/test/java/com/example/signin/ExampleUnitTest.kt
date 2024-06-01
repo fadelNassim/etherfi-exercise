@@ -1,4 +1,4 @@
-package com.example.auth
+package com.example.signin
 
 import org.junit.Test
 

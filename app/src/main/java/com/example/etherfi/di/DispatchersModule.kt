@@ -1,4 +1,4 @@
-package com.example.home.di
+package com.example.etherfi.di
 
 import dagger.Module
 import dagger.Provides
