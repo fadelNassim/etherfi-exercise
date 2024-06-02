@@ -2,6 +2,7 @@ package com.example.signin.domain.usecases
 
 import com.example.signin.data.models.SiweResponse
 import com.example.signin.data.repositories.SiweRepository
+import com.example.signin.domain.entities.ErrorReason
 import com.example.signin.domain.entities.SiweResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -13,7 +14,7 @@ class AuthenticateSIWE @Inject constructor(private val repository: SiweRepositor
         return repository.result.map {
             when (it) {
                 is SiweResponse.Success -> SiweResult.Success(message = it.message)
-                is SiweResponse.Error -> SiweResult.Error(message = it.message)
+                is SiweResponse.Error -> SiweResult.Error(message =  ErrorReason.FailedSiweAuthenticate)
             }
         }
      }

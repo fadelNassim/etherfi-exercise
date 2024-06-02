@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.walletconnection"
+    namespace = "com.example.signin"
     compileSdk = 34
 
     defaultConfig {

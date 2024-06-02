@@ -67,4 +67,7 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
     implementation(libs.androidx.lifecycle.runtime.ktx.v231)
+    implementation(platform(libs.android.bom))
+    implementation(libs.android.core)
+    implementation(libs.web3modal)
 }

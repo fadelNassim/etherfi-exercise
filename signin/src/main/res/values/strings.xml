@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="generic_error">Ooops! something went wrong, please try again later.</string>
+    <string name="session_auth_error">Session Authentication Error.</string>
+    <string name="session_siwe_auth_error">Session SIWE Authentication Error.</string>
+    <string name="expired_proposal">Proposal expired, please try again later.</string>
+    <string name="deleted_session_error">Session deleted, please try again later.</string>
+    <string name="rejected_session">Session rejected, please try again later.</string>
+    <string name="connection_not_available">Connection not available. Check your internet connection and try again.</string>
+</resources>

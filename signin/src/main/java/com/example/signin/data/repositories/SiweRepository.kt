@@ -1,5 +1,6 @@
 package com.example.signin.data.repositories
 
+import android.content.SharedPreferences
 import com.example.signin.data.models.SiweResponse
 import com.walletconnect.util.bytesToHex
 import com.walletconnect.util.randomBytes
@@ -13,15 +14,18 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class SiweRepository @Inject constructor(ioDispatcher: CoroutineDispatcher) {
+class SiweRepository @Inject constructor(ioDispatcher: CoroutineDispatcher, private val sharedPreferences: SharedPreferences) {
     private val scope = CoroutineScope(ioDispatcher)
     companion object {
         private const val AUTH_UNKNOWN_ERROR_MESSAGE = "SIWE Auth: Unknown error"
+        private const val IS_SIWE_AUTHENTICATED = "IS_SIWE_AUTHENTICATED"
     }
 
     private val _result = MutableSharedFlow<SiweResponse>()
     val result: SharedFlow<SiweResponse> = _result
 
+    fun isSiweAuthenticated() = sharedPreferences.getBoolean(IS_SIWE_AUTHENTICATED, false)
+    fun clearSiweAuthentication() = sharedPreferences.edit().putBoolean(IS_SIWE_AUTHENTICATED, false).apply()
     fun authenticate() {
         val authenticateParams = Modal.Params.Authenticate(
             chains = Web3ModalChainsPresets.ethChains.values.map { it.id },
@@ -47,6 +51,7 @@ class SiweRepository @Inject constructor(ioDispatcher: CoroutineDispatcher) {
                 )
             }
         }, onSuccess = { response ->
+            sharedPreferences.edit().putBoolean(IS_SIWE_AUTHENTICATED, true).apply()
             println(response)
             scope.launch {
                 _result.emit(SiweResponse.Success(message = response))

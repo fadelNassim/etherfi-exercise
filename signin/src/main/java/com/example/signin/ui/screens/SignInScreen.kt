@@ -12,10 +12,19 @@ import com.walletconnect.web3.modal.ui.components.button.AccountButtonType
 import com.walletconnect.web3.modal.ui.components.button.ConnectButtonSize
 import com.walletconnect.web3.modal.ui.components.button.Web3Button
 import com.walletconnect.web3.modal.ui.components.button.rememberWeb3ModalState
-import android.widget.Toast
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.example.signin.domain.entities.ErrorReason
 
 @Composable
 fun SignInScreen(appPadding: PaddingValues, navController: NavController, goToHomeScreen: () -> Unit){
@@ -23,29 +32,60 @@ fun SignInScreen(appPadding: PaddingValues, navController: NavController, goToHo
     val viewModel: SignInViewModel = hiltViewModel()
     val walletConnectState = viewModel.walletConnectState.collectAsState()
 
-    when (val state = walletConnectState.value) {
-        is WalletConnectUiState.FirstConnectionSuccess -> {
-            Button(onClick = { viewModel.swieButtonClicked() }) {
-              Text(text = "Sign In with Ethereum")
+    Column(modifier = Modifier
+        .padding(appPadding)
+        .fillMaxWidth()
+        .fillMaxHeight(), horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally, verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center) {
+        when (val state = walletConnectState.value) {
+            is WalletConnectUiState.ShowSIWE -> {
+                Row {
+                    Button(onClick = {viewModel.siweCancel() }) {
+                        Text(text = "Cancel")
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Button(onClick = { viewModel.swieButtonClicked() }) {
+                        Text(text = "Sign In with Ethereum")
+                    }
+                }
             }
+            is WalletConnectUiState.ShowConnectWallet -> {
+                Web3Button(
+                    state = web3ModalState,
+                    accountButtonType = AccountButtonType.NORMAL,
+                    connectButtonSize = ConnectButtonSize.NORMAL
+                )
+            }
+            is WalletConnectUiState.ShowError -> {
+                val errorMessage = when (state.reason)  {
+                    is ErrorReason.GenericError -> {stringResource(id = com.example.signin.R.string.generic_error)}
+                    is ErrorReason.SessionAuthenticateError -> {
+                        stringResource(id = com.example.signin.R.string.session_auth_error)
+                    }
+                    is ErrorReason.ExpiredProposal -> {
+                        stringResource(id = com.example.signin.R.string.expired_proposal)
+                    }
+                    is ErrorReason.DeletedSessionError -> {
+                        stringResource(id = com.example.signin.R.string.deleted_session_error)
+                    }
+                    is ErrorReason.RejectedSession -> {
+                        stringResource(id = com.example.signin.R.string.rejected_session)
+                    }
+                    is ErrorReason.ConnectionNotAvailable -> {
+                        stringResource(id = com.example.signin.R.string.connection_not_available)
+                    }
+                    is ErrorReason.FailedSiweAuthenticate -> {
+                        stringResource(id = com.example.signin.R.string.session_auth_error)
+                    }
+                }
+                Text(text = errorMessage)
+            }
+            is WalletConnectUiState.Loading -> {
+                CircularProgressIndicator()
+            }
+            WalletConnectUiState.GoToHomeScreen -> {
+                goToHomeScreen()
+            }
+            else -> {}
         }
-        is WalletConnectUiState.ShowConnectWallet -> {
-            Web3Button(
-                state = web3ModalState,
-                accountButtonType = AccountButtonType.NORMAL,
-                connectButtonSize = ConnectButtonSize.NORMAL
-            )
-        }
-        is WalletConnectUiState.ShowError -> {
-            Toast.makeText(LocalContext.current, state.message, Toast.LENGTH_SHORT).show()
-        }
-        is WalletConnectUiState.Loading -> {
-            CircularProgressIndicator()
-        }
-        WalletConnectUiState.GoToHomeScreen -> {
-            goToHomeScreen()
-            viewModel.resetUi()
-        }
-        else -> {}
     }
 }

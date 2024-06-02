@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 class ConnectWalletModalDelegate (dispatcher: CoroutineDispatcher) : ModalDelegate {
     private val scope = CoroutineScope(dispatcher)
     private val _events: MutableSharedFlow<Model> = MutableSharedFlow()
-    val event: SharedFlow<Model> =  _events.asSharedFlow()
+    val event: SharedFlow<Model> = _events.asSharedFlow()
 
     init {
         Web3Modal.setDelegate(this)

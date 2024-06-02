@@ -18,12 +18,11 @@ sealed class Screen(val route: String) {
 fun AppNavigation(appPadding: PaddingValues, navController: NavHostController) {
     NavHost(navController = navController, startDestination = Screen.SignInScreen.route) {
         composable(Screen.HomeScreen.route) {
-            HomeScreen(appPadding)
+            HomeScreen(appPadding = appPadding, navController = navController)
         }
         web3ModalGraph(navController)
         composable(Screen.SignInScreen.route) {
             SignInScreen(appPadding = appPadding, navController = navController, goToHomeScreen = {
-                navController.popBackStack()
                 navController.navigate(Screen.HomeScreen.route)
             })
         }

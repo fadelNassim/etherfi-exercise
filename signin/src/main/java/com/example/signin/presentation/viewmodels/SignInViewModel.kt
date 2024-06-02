@@ -21,33 +21,25 @@ class SignInViewModel @Inject constructor(
     private val getModalEvents: GetModalEvents,
     private val authenticateSIWE: AuthenticateSIWE,
     private val ioDispatcher: CoroutineDispatcher) : ViewModel() {
-
-        init {
-            getModalEvents()
-        }
-
     private val _walletConnectState = MutableStateFlow<WalletConnectUiState>(NoState)
     val walletConnectState: StateFlow<WalletConnectUiState> = _walletConnectState
+
+    init { getModalEvents() }
 
     private fun getModalEvents() = viewModelScope.launch(ioDispatcher) {
         _walletConnectState.value = Loading
         getModalEvents.invoke().collect { result ->
             _walletConnectState.value  = when (result) {
-                is ModalResult.FirstConnectionSuccess -> FirstConnectionSuccess
-                is ModalResult.ConnectionAvailable -> handleAvailableConnection()
-                is ModalResult.ConnectionNotAvailable -> ShowError("Connection not available.")
-                is ModalResult.Error -> ShowError(result.message)
+                 ModalResult.UserShouldSIWE -> ShowSIWE
+                is ModalResult.UserConnected -> {GoToHomeScreen}
+                is ModalResult.UserDisconnected -> ShowConnectWallet
+                is ModalResult.Error -> ShowError(result.reason)
                 else -> NoState
             }
         }
     }
 
-   private fun handleAvailableConnection() = if (Web3Modal.getAccount() != null) {
-        GoToHomeScreen
-    } else {
-        ShowConnectWallet
-    }
-     fun swieButtonClicked() = viewModelScope.launch(ioDispatcher) {
+    fun swieButtonClicked() = viewModelScope.launch(ioDispatcher) {
          _walletConnectState.value = Loading
          authenticateSIWE.invoke().collect {siweResult ->
                 _walletConnectState.value = when (siweResult) {
@@ -55,9 +47,21 @@ class SignInViewModel @Inject constructor(
                     is SiweResult.Error -> ShowError(siweResult.message)
                 }
          }
-     }
+    }
 
-    fun resetUi() {
-        _walletConnectState.value = NoState
+    fun siweCancel() = viewModelScope.launch(ioDispatcher) {
+            _walletConnectState.value = Loading
+            Web3Modal.disconnect(
+                onSuccess = {
+                    viewModelScope.launch {
+                        _walletConnectState.emit(
+                            ShowConnectWallet
+                        )
+                    }
+                },
+                onError = { throwable: Throwable ->
+                    println("USER DISCONNECT ERROR: ${throwable.message}")
+                }
+            )
     }
 }

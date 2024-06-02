@@ -1,5 +1,6 @@
 package com.example.signin.data.repositories
 
+import android.content.SharedPreferences
 import com.example.signin.data.models.ModalResponse
 import com.example.signin.data.models.ModalResponse.*
 import com.example.walletconnect.ConnectWalletModalDelegate
@@ -9,6 +10,7 @@ import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class Web3ModalRepository @Inject constructor(private val delegate: ConnectWalletModalDelegate) {
+
    suspend fun fetchModalResponse() = flow {
       delegate.event.collect { event ->
          emit(transformEventToModalResponse(event))
