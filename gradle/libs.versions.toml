@@ -20,6 +20,8 @@ roomCompiler = "2.6.1"
 roomCommon = "2.6.1"
 roomKtx = "2.6.1"
 roomRuntime = "2.6.1"
+appcompat = "1.7.0"
+material = "1.12.0"
 
 [libraries]
 android-bom = { module = "com.walletconnect:android-bom", version.ref = "androidBom" }
@@ -51,6 +53,8 @@ kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-t
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
 web3modal = { module = "com.walletconnect:web3modal" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

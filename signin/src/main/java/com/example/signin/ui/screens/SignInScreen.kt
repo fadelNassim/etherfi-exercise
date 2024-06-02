@@ -1,44 +1,51 @@
 package com.example.signin.ui.screens
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Text
-import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.collectAsState
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.walletconnect.web3.modal.ui.components.button.AccountButton
+import com.example.signin.presentation.displaymodels.WalletConnectUi
+import com.example.signin.presentation.viewmodels.SignInViewModel
 import com.walletconnect.web3.modal.ui.components.button.AccountButtonType
-import com.walletconnect.web3.modal.ui.components.button.ConnectButton
 import com.walletconnect.web3.modal.ui.components.button.ConnectButtonSize
-import com.walletconnect.web3.modal.ui.components.button.NetworkButton
 import com.walletconnect.web3.modal.ui.components.button.Web3Button
 import com.walletconnect.web3.modal.ui.components.button.rememberWeb3ModalState
-import com.walletconnect.web3.modal.ui.openWeb3Modal
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
+import com.walletconnect.web3.modal.ui.components.button.ConnectButton
 
 @Composable
 fun SignInScreen(appPadding: PaddingValues, navController: NavController) {
     val web3ModalState = rememberWeb3ModalState(navController = navController)
-    Column(Modifier.padding(appPadding)) {
-        Button(onClick = { println("OK"); navController.openWeb3Modal(shouldOpenChooseNetwork = true, onError = {
-            println("WEB3 MODAL open: $it")
-        })}) {
-       
+    val viewModel: SignInViewModel = hiltViewModel()
+    val walletConnectState = viewModel.walletConnectState.collectAsState()
+
+    when (val state = walletConnectState.value) {
+        is WalletConnectUi.Success -> {
+            Toast.makeText(LocalContext.current, state.message, Toast.LENGTH_SHORT).show()
+            Web3Button(
+                state = web3ModalState,
+                accountButtonType = AccountButtonType.NORMAL,
+                connectButtonSize = ConnectButtonSize.NORMAL
+            )
         }
-        Web3Button(
-            state = web3ModalState,
-            accountButtonType = AccountButtonType.NORMAL,
-            connectButtonSize = ConnectButtonSize.NORMAL
-        )
-        NetworkButton(state = web3ModalState)
-        ConnectButton(
-            state = web3ModalState,
-            buttonSize = ConnectButtonSize.NORMAL
-        )
-        AccountButton(
-            state = web3ModalState,
-            accountButtonType = AccountButtonType.NORMAL
-        )
+        is WalletConnectUi.ShowError -> {
+            Toast.makeText(LocalContext.current, state.message, Toast.LENGTH_SHORT).show()
+        }
+        is WalletConnectUi.Loading -> {
+            CircularProgressIndicator()
+        }
+        WalletConnectUi.NoState -> {
+            if (web3ModalState.isConnected.collectAsState(false).value) {
+
+            } else {
+                ConnectButton(
+                    state = web3ModalState,
+                    buttonSize = ConnectButtonSize.NORMAL
+                )
+            }
+        }
     }
 }

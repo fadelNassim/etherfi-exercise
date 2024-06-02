@@ -25,3 +25,4 @@ rootProject.name = "etherfi"
 include(":app")
 include(":home")
 include(":signin")
+include(":walletconnect")

@@ -72,4 +72,5 @@ dependencies {
     implementation(libs.android.core)
     implementation(libs.web3modal)
     implementation(libs.androidx.material)
+    implementation(project(":walletconnect"))
 }

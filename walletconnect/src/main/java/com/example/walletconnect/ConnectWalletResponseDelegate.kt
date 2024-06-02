@@ -1,4 +1,4 @@
-package com.example.etherfi.di
+package com.example.walletconnect
 
 import com.walletconnect.web3.modal.client.Modal.Model
 import com.walletconnect.web3.modal.client.Modal.Model.*
@@ -11,10 +11,10 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
-class ConnectWalletEventsDelegate (dispatcher: CoroutineDispatcher) : ModalDelegate {
+class ConnectWalletModalDelegate (dispatcher: CoroutineDispatcher) : ModalDelegate {
     private val scope = CoroutineScope(dispatcher)
-    private val _events: MutableSharedFlow<Model?> = MutableSharedFlow()
-    val event: SharedFlow<Model?> =  _events.asSharedFlow()
+    private val _events: MutableSharedFlow<Model> = MutableSharedFlow()
+    val event: SharedFlow<Model> =  _events.asSharedFlow()
 
     init {
         Web3Modal.setDelegate(this)
@@ -69,7 +69,9 @@ class ConnectWalletEventsDelegate (dispatcher: CoroutineDispatcher) : ModalDeleg
     }
 
     override fun onSessionAuthenticateResponse(sessionUpdateResponse: SessionAuthenticateResponse) {
-        TODO("Not yet implemented")
+        scope.launch {
+           _events.emit(sessionUpdateResponse)
+        }
     }
 
     override fun onProposalExpired(proposal: ExpiredProposal) {

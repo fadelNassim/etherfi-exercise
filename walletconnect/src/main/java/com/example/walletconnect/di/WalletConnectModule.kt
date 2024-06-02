@@ -1,5 +1,6 @@
-package com.example.etherfi.di
+package com.example.walletconnect.di
 
+import com.example.walletconnect.ConnectWalletModalDelegate
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,7 +13,7 @@ import javax.inject.Singleton
 class WalletConnectModule {
     @Provides
     @Singleton
-    fun provideConnectWalledResponseDelegate(dispatcher: CoroutineDispatcher): ConnectWalletEventsDelegate {
-        return ConnectWalletEventsDelegate(dispatcher = dispatcher)
+    fun provideConnectWalledResponseDelegate(ioDispatcher: CoroutineDispatcher): ConnectWalletModalDelegate {
+        return ConnectWalletModalDelegate(dispatcher = ioDispatcher)
     }
 }
