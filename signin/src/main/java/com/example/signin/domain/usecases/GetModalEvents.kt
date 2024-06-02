@@ -9,24 +9,14 @@ import javax.inject.Inject
 class GetModalEvents @Inject constructor(private val repository: Web3ModalRepository){
     suspend fun invoke() = repository.fetchModalResponse().map { response ->
         when (response) {
-            is ModalResponse.SessionApproved -> ModalResult.FirstConnectionSuccess(message = "First Connection Successful")
-            is ModalResponse.ConnectionState -> ModalResult.ReconnectionSuccess("Reconnection Successful")
-            is ModalResponse.UpdatedSession,
-            is ModalResponse.SessionEvent,
-            is ModalResponse.Event,
-            is ModalResponse.DeletedSessionSuccess,
-            is ModalResponse.Session,
-            is ModalResponse.SessionRequestResponse,
-            is ModalResponse.SessionAuthenticateResult,
-            is ModalResponse.ExpiredProposal,
-            is ModalResponse.ExpiredRequest,
-           -> ModalResult.Success("Operation was successful")
-
+            is ModalResponse.SessionApproved -> ModalResult.FirstConnectionSuccess
+            is ModalResponse.ConnectionAvailable -> ModalResult.ConnectionAvailable
             is ModalResponse.RejectedSession,
+            is ModalResponse.ConnectionNotAvailable,
             is ModalResponse.DeletedSessionError,
             is ModalResponse.SessionAuthenticateError,
-            is ModalResponse.Error -> ModalResult.Error("Oops! Something went wrong.")
-            is ModalResponse.Unknown -> {}
+            is ModalResponse.Error -> ModalResult.Error("Oops! Something went wrong, try again later.")
+            else -> {}
         }
     }
 }

@@ -17,7 +17,8 @@ sealed class ModalResponse {
     data class SessionAuthenticateError(val id: Long, val code: Int, val message: String) : ModalResponse()
     data class ExpiredProposal(val pairingTopic: String, val proposerPublicKey: String) : ModalResponse()
     data class ExpiredRequest(val topic: String, val id: Long) : ModalResponse()
-    data class ConnectionState(val isAvailable: Boolean) : ModalResponse()
+    data object ConnectionAvailable: ModalResponse()
+    data object ConnectionNotAvailable: ModalResponse()
     data class Error(val throwable: Throwable) : ModalResponse()
     data object Unknown : ModalResponse()
 }

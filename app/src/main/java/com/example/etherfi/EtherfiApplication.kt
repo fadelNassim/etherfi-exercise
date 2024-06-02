@@ -5,8 +5,6 @@ import com.example.walletconnect.ConnectWalletModalDelegate
 import com.walletconnect.android.Core
 import com.walletconnect.android.CoreClient
 import com.walletconnect.android.relay.ConnectionType
-import com.walletconnect.sign.client.Sign
-import com.walletconnect.sign.client.SignClient
 import com.walletconnect.web3.modal.client.Modal
 import com.walletconnect.web3.modal.client.Web3Modal
 import com.walletconnect.web3.modal.presets.Web3ModalChainsPresets
@@ -15,6 +13,9 @@ import javax.inject.Inject
 
 @HiltAndroidApp
 class EtherfiApplication: Application() {
+    @Inject
+    lateinit var web3ModalModalDelegate: ConnectWalletModalDelegate
+
     private fun setupModal() {
         val initParams = Modal.Params.Init(core = CoreClient)
         Web3Modal.initialize(
@@ -33,16 +34,6 @@ class EtherfiApplication: Application() {
         )
     }
 
-    private fun setupAuth() {
-        val init = Sign.Params.Init(core = CoreClient)
-
-        SignClient.initialize(init) { error ->
-            println("SignClient Error: $error")
-        }
-    }
-
-    @Inject
-    lateinit var web3ModalModalDelegate: ConnectWalletModalDelegate
     override fun onCreate() {
         super.onCreate()
         val connectionType =  ConnectionType.AUTOMATIC
@@ -61,6 +52,5 @@ class EtherfiApplication: Application() {
             println("CoreClient Error: $it")
         })
         setupModal()
-        setupAuth()
     }
 }

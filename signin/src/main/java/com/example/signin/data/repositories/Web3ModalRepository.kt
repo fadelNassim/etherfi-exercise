@@ -56,12 +56,20 @@ class Web3ModalRepository @Inject constructor(private val delegate: ConnectWalle
             ExpiredRequest(event.topic, event.id)
          }
          is Model.ConnectionState -> {
-            ConnectionState(event.isAvailable)
+            getConnectionState(event.isAvailable)
          }
          is Model.Error -> {
             Error(event.throwable)
          }
          else -> Unknown
       }
+   }
+
+   private fun getConnectionState(available: Boolean): ModalResponse {
+        return if (available) {
+             ConnectionAvailable
+        } else {
+             ConnectionNotAvailable
+        }
    }
 }
