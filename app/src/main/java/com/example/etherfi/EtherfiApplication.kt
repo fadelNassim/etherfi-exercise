@@ -1,11 +1,12 @@
 package com.example.etherfi
 
 import android.app.Application
-import android.widget.Toast
 import com.example.walletconnect.ConnectWalletModalDelegate
 import com.walletconnect.android.Core
 import com.walletconnect.android.CoreClient
 import com.walletconnect.android.relay.ConnectionType
+import com.walletconnect.sign.client.Sign
+import com.walletconnect.sign.client.SignClient
 import com.walletconnect.web3.modal.client.Modal
 import com.walletconnect.web3.modal.client.Web3Modal
 import com.walletconnect.web3.modal.presets.Web3ModalChainsPresets
@@ -14,6 +15,32 @@ import javax.inject.Inject
 
 @HiltAndroidApp
 class EtherfiApplication: Application() {
+    private fun setupModal() {
+        val initParams = Modal.Params.Init(core = CoreClient)
+        Web3Modal.initialize(
+            init = initParams,
+            onSuccess = {
+                println("Web3Modal Success")
+            },
+            onError = { error ->
+                println("Web3Modal Error: $error")
+            }
+        )
+        Web3Modal.setChains(Web3ModalChainsPresets.ethChains.values.toList())
+        Web3Modal.setDelegate(web3ModalModalDelegate)
+        Web3Modal.setSessionProperties(
+            properties = emptyMap()
+        )
+    }
+
+    private fun setupAuth() {
+        val init = Sign.Params.Init(core = CoreClient)
+
+        SignClient.initialize(init) { error ->
+            println("SignClient Error: $error")
+        }
+    }
+
     @Inject
     lateinit var web3ModalModalDelegate: ConnectWalletModalDelegate
     override fun onCreate() {
@@ -33,22 +60,7 @@ class EtherfiApplication: Application() {
         CoreClient.initialize(relayServerUrl = serverUrl, connectionType = connectionType, application = this, metaData = appMetaData, onError = {
             println("CoreClient Error: $it")
         })
-
-        val initParams = Modal.Params.Init(core = CoreClient)
-        Web3Modal.initialize(
-            init = initParams,
-            onSuccess = {
-                Toast.makeText(applicationContext,"Web3Modal Success", Toast.LENGTH_SHORT).show()
-            },
-            onError = { error ->
-                println("Web3Model Error: $error")
-            }
-        )
-
-        Web3Modal.setChains(Web3ModalChainsPresets.ethChains.values.toList())
-        Web3Modal.setDelegate(web3ModalModalDelegate)
-        Web3Modal.setSessionProperties(
-            properties = emptyMap()
-        )
+        setupModal()
+        setupAuth()
     }
 }

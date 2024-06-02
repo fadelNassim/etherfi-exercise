@@ -4,7 +4,7 @@ import com.walletconnect.android.Core
 import com.walletconnect.web3.modal.client.Modal.Model
 
 sealed class ModalResponse {
-    data class SessionApproved(val message: String) : ModalResponse()
+    data object SessionApproved : ModalResponse()
     data class RejectedSession(val topic: String, val reason: String) : ModalResponse()
     data class UpdatedSession(val topic: String, val namespaces: Map<String, Model.Namespace.Session>) : ModalResponse()
     data class SessionEvent(val name: String, val data: String) : ModalResponse()

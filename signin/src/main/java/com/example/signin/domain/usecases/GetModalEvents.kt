@@ -7,9 +7,10 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class GetModalEvents @Inject constructor(private val repository: Web3ModalRepository){
-    suspend fun invoke() = repository.fetchModalResponse().map {
-        when (it) {
-            is ModalResponse.SessionApproved,
+    suspend fun invoke() = repository.fetchModalResponse().map { response ->
+        when (response) {
+            is ModalResponse.SessionApproved -> ModalResult.FirstConnectionSuccess(message = "First Connection Successful")
+            is ModalResponse.ConnectionState -> ModalResult.ReconnectionSuccess("Reconnection Successful")
             is ModalResponse.UpdatedSession,
             is ModalResponse.SessionEvent,
             is ModalResponse.Event,
@@ -19,14 +20,13 @@ class GetModalEvents @Inject constructor(private val repository: Web3ModalReposi
             is ModalResponse.SessionAuthenticateResult,
             is ModalResponse.ExpiredProposal,
             is ModalResponse.ExpiredRequest,
-            is ModalResponse.ConnectionState -> ModalResult.Success("Operation was successful")
+           -> ModalResult.Success("Operation was successful")
 
             is ModalResponse.RejectedSession,
             is ModalResponse.DeletedSessionError,
             is ModalResponse.SessionAuthenticateError,
-            is ModalResponse.Error -> ModalResult.Error("An error occurred")
-
-            else -> {}
+            is ModalResponse.Error -> ModalResult.Error("Oops! Something went wrong.")
+            is ModalResponse.Unknown -> {}
         }
     }
 }

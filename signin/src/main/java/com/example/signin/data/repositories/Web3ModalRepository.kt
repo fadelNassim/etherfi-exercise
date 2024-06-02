@@ -16,12 +16,9 @@ class Web3ModalRepository @Inject constructor(private val delegate: ConnectWalle
       }
    }
 
-
    private fun transformEventToModalResponse(event: Model): ModalResponse {
       return when (event) {
-         is Model.ApprovedSession -> {
-            SessionApproved("Session has been approved")
-         }
+         is Model.ApprovedSession  -> { SessionApproved }
          is Model.RejectedSession -> {
             RejectedSession(event.topic, event.reason)
          }
