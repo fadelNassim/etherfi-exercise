@@ -26,17 +26,21 @@ class HomeViewModel @Inject constructor(
         MutableStateFlow<HomeUiState>(ShowHomeContent(getWalletAddress.invoke()))
     val homeUiState: StateFlow<HomeUiState> = _homeUiState
 
+    private suspend fun handleDisconnect() {
+        disconnectUser.invoke().collect { result ->
+            _homeUiState.value = when (result) {
+                DisconnectUserResult.UserDisconnected -> GoToSignIn
+                else -> ShowTryAgain
+            }
+        }
+    }
+
     fun onDisconnectClick() = viewModelScope.launch(ioDispatcher) {
         _homeUiState.value = Loading
         if (isNetworkAvailable.invoke().not()) {
             _homeUiState.value = ShowTryAgain
         } else {
-            disconnectUser.invoke().collect { result ->
-                _homeUiState.value = when (result) {
-                    DisconnectUserResult.UserDisconnected -> GoToSignIn
-                    else -> ShowTryAgain
-                }
-            }
+           handleDisconnect()
         }
     }
 }

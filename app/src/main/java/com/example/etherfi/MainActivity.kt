@@ -11,6 +11,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.rememberNavController
 import com.example.etherfi.navigation.AppNavigation
 import com.google.accompanist.navigation.material.BottomSheetNavigator
@@ -33,7 +34,7 @@ class MainActivity : ComponentActivity() {
             val bottomSheetNavigator = BottomSheetNavigator(modalSheetState)
             val navController = rememberNavController(bottomSheetNavigator)
             Scaffold(
-                topBar = { TopAppBar(title = { Text("Etherfi") }) },
+                topBar = { TopAppBar(title = { Text(stringResource(R.string.app_name)) }) },
             ) { appPadding ->
                 ModalBottomSheetLayout(bottomSheetNavigator = bottomSheetNavigator) {
                     AppNavigation(appPadding = appPadding, navController = navController)
