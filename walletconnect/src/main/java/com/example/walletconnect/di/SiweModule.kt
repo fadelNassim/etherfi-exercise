@@ -11,6 +11,8 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Named
 import javax.inject.Singleton
 
+/** Hardcoded values for exercise purpose,
+ *  must be in local.properties and loaded according to the buildType */
 @Module
 @InstallIn(SingletonComponent::class)
 class SiweModule {

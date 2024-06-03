@@ -34,6 +34,8 @@ class EtherfiApplication : Application() {
         )
     }
 
+    /** Setup CoreClient, hardcoded values for exercise purpose,
+     *  must be in local.properties and loaded according to the buildType */
     fun setupCoreClient() {
         val connectionType = ConnectionType.AUTOMATIC
         val projectId = "6df9221c03aa9df8f02c5fdf1a50d235"

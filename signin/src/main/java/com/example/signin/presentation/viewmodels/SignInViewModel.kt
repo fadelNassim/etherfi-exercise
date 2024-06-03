@@ -34,9 +34,18 @@ class SignInViewModel @Inject constructor(
        tryListenToModal()
     }
 
-    fun tryListenToModal() {
-        if (isNetworkAvailable.invoke()) { getModalEvents() }
+    private fun tryListenToModal() {
+        if (isNetworkAvailable.invoke()) {
+          handleRedirecWhenNetworkAvailable()
+        }
         else { _signInUiState.value = ShowTryAgain(ErrorReason.ConnectionNotAvailable) }
+    }
+
+    private fun handleRedirecWhenNetworkAvailable() {
+        when {
+            authenticateSIWE.isUserSIWEAuthenticated() -> _signInUiState.value = GoToHomeScreen
+            else -> getModalEvents()
+        }
     }
 
     private fun getModalEvents() = viewModelScope.launch(ioDispatcher) {

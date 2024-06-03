@@ -18,4 +18,5 @@ class AuthenticateSIWE @Inject constructor(private val repository: SiweRepositor
             }
         }
     }
+    fun isUserSIWEAuthenticated() = repository.isSiweAuthenticated()
 }
