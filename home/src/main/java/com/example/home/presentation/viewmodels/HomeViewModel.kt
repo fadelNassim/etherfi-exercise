@@ -3,11 +3,11 @@ package com.example.home.presentation.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.home.domain.usecases.GetWalletAddress
-import com.example.walletconnect.usecases.usecases.IsNetworkAvailable
+import com.example.walletconnect.domain.usecases.IsNetworkAvailable
 import com.example.home.presentation.uistates.HomeUiState
 import com.example.home.presentation.uistates.HomeUiState.*
-import com.example.walletconnect.usecases.entities.DisconnectUserResult
-import com.example.walletconnect.usecases.usecases.DisconnectUser
+import com.example.walletconnect.domain.entities.DisconnectUserResult
+import com.example.walletconnect.domain.usecases.DisconnectUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow

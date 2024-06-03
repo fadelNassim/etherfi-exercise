@@ -1,6 +1,6 @@
 package com.example.walletconnect.di
 
-import com.example.walletconnect.ConnectWalletModalDelegate
+import com.example.walletconnect.data.ConnectWalletModalDelegate
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

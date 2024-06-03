@@ -4,7 +4,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import com.example.walletconnect.data.models.ModalResponse
 import com.example.walletconnect.data.models.ModalResponse.*
-import com.example.walletconnect.ConnectWalletModalDelegate
+import com.example.walletconnect.data.ConnectWalletModalDelegate
 import com.walletconnect.web3.modal.client.Modal.Model
 import com.walletconnect.web3.modal.client.Modal.Model.SessionRequestResponse
 import com.walletconnect.web3.modal.client.Web3Modal

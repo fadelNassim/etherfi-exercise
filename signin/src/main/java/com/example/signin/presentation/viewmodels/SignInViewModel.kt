@@ -2,16 +2,16 @@ package com.example.signin.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.walletconnect.usecases.entities.DisconnectUserResult.UserDisconnected
+import com.example.walletconnect.domain.entities.DisconnectUserResult.UserDisconnected
 import com.example.signin.domain.entities.ErrorReason
 import com.example.signin.domain.entities.ModalResult
 import com.example.signin.domain.entities.SiweResult
 import com.example.signin.domain.usecases.AuthenticateSIWE
-import com.example.walletconnect.usecases.usecases.DisconnectUser
+import com.example.walletconnect.domain.usecases.DisconnectUser
 import com.example.signin.domain.usecases.GetModalEvents
 import com.example.signin.presentation.uistates.SignInUiState
 import com.example.signin.presentation.uistates.SignInUiState.*
-import com.example.walletconnect.usecases.usecases.IsNetworkAvailable
+import com.example.walletconnect.domain.usecases.IsNetworkAvailable
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow

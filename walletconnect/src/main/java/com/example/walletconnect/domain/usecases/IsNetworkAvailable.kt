@@ -1,4 +1,4 @@
-package com.example.walletconnect.usecases.usecases
+package com.example.walletconnect.domain.usecases
 
 import com.example.walletconnect.data.repositories.Web3ModalRepository
 import javax.inject.Inject

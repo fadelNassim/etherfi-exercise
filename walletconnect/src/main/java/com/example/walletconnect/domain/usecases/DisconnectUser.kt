@@ -1,9 +1,9 @@
-package com.example.walletconnect.usecases.usecases
+package com.example.walletconnect.domain.usecases
 
 import com.example.walletconnect.data.models.ModalResponse
 import com.example.walletconnect.data.repositories.SiweRepository
 import com.example.walletconnect.data.repositories.Web3ModalRepository
-import com.example.walletconnect.usecases.entities.DisconnectUserResult
+import com.example.walletconnect.domain.entities.DisconnectUserResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

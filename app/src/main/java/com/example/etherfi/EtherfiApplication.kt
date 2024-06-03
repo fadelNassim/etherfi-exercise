@@ -1,7 +1,7 @@
 package com.example.etherfi
 
 import android.app.Application
-import com.example.walletconnect.ConnectWalletModalDelegate
+import com.example.walletconnect.data.ConnectWalletModalDelegate
 import com.walletconnect.android.Core
 import com.walletconnect.android.CoreClient
 import com.walletconnect.android.relay.ConnectionType

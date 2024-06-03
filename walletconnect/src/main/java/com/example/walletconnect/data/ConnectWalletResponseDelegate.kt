@@ -1,4 +1,4 @@
-package com.example.walletconnect
+package com.example.walletconnect.data
 
 import com.walletconnect.web3.modal.client.Modal.Model
 import com.walletconnect.web3.modal.client.Modal.Model.*
