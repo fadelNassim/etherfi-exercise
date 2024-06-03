@@ -46,13 +46,9 @@ class SignInViewModel @Inject constructor(
 
     private fun handleRedirectWhenNetworkAvailable() {
         when {
-            getUserSession.isUserSIWEAuthenticated() && getUserSession.isUserWalletConnected() -> _signInUiState.value =
-                GoToHomeScreen
-
-            getUserSession.isUserWalletConnected() && getUserSession.isUserSIWEAuthenticated()
-                .not() -> _signInUiState.value = ShowSIWE
-
-            else -> getModalEvents()
+            getUserSession.isFullySignedIn -> _signInUiState.value = GoToHomeScreen
+            getUserSession.needSiwe -> _signInUiState.value = ShowSIWE
+            getUserSession.hasAccount.not() -> getModalEvents()
         }
     }
 
