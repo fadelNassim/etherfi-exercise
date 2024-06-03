@@ -9,6 +9,7 @@ import com.example.signin.domain.entities.SiweResult
 import com.example.signin.domain.usecases.AuthenticateSIWE
 import com.example.walletconnect.domain.usecases.DisconnectUser
 import com.example.signin.domain.usecases.GetModalEvents
+import com.example.signin.domain.usecases.GetUserSession
 import com.example.signin.presentation.uistates.SignInUiState
 import com.example.signin.presentation.uistates.SignInUiState.*
 import com.example.walletconnect.domain.usecases.IsNetworkAvailable
@@ -22,6 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SignInViewModel @Inject constructor(
     private val getModalEvents: GetModalEvents,
+    private val getUserSession: GetUserSession,
     private val authenticateSIWE: AuthenticateSIWE,
     private val disconnectUser: DisconnectUser,
     private val ioDispatcher: CoroutineDispatcher,
@@ -31,19 +33,25 @@ class SignInViewModel @Inject constructor(
     val signInUiState: StateFlow<SignInUiState> = _signInUiState
 
     init {
-       tryListenToModal()
+        tryListenToModal()
     }
 
     private fun tryListenToModal() {
         if (isNetworkAvailable.invoke()) {
-          handleRedirecWhenNetworkAvailable()
+            handleRedirecWhenNetworkAvailable()
+        } else {
+            _signInUiState.value = ShowTryAgain(ErrorReason.ConnectionNotAvailable)
         }
-        else { _signInUiState.value = ShowTryAgain(ErrorReason.ConnectionNotAvailable) }
     }
 
     private fun handleRedirecWhenNetworkAvailable() {
         when {
-            authenticateSIWE.isUserSIWEAuthenticated() -> _signInUiState.value = GoToHomeScreen
+            getUserSession.isUserSIWEAuthenticated() && getUserSession.isUserWalletConnected() -> _signInUiState.value =
+                GoToHomeScreen
+
+            getUserSession.isUserWalletConnected() && getUserSession.isUserSIWEAuthenticated()
+                .not() -> _signInUiState.value = ShowSIWE
+
             else -> getModalEvents()
         }
     }
@@ -56,6 +64,7 @@ class SignInViewModel @Inject constructor(
                 is ModalResult.UserConnected -> {
                     GoToHomeScreen
                 }
+
                 is ModalResult.UserDisconnected -> ShowConnectWallet
                 is ModalResult.Error -> ShowError(result.reason)
                 else -> NoState
@@ -94,7 +103,7 @@ class SignInViewModel @Inject constructor(
 
     fun onTryAgainClicked(reason: ErrorReason) {
         if (reason == ErrorReason.FailedSiweAuthenticate) {
-           tryResetConnection()
+            tryResetConnection()
         } else {
             tryListenToModal()
         }
