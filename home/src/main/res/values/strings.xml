@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="failed_to_retrieve_account_address">"Failed to retrieve account address."</string>
+    <string name="failed_to_disconnect">"Failed to disconnect."</string>
+    <string name="try_again_button">Try again</string>
+</resources>

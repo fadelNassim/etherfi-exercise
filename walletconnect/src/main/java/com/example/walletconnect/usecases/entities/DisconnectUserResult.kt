@@ -1,4 +1,4 @@
-package com.example.signin.domain.entities
+package com.example.walletconnect.usecases.entities
 
 sealed class DisconnectUserResult {
     data object UserDisconnected : DisconnectUserResult()

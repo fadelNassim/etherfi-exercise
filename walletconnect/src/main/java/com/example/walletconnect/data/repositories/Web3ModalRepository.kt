@@ -1,7 +1,7 @@
-package com.example.signin.data.repositories
+package com.example.walletconnect.data.repositories
 
-import com.example.signin.data.models.ModalResponse
-import com.example.signin.data.models.ModalResponse.*
+import com.example.walletconnect.data.models.ModalResponse
+import com.example.walletconnect.data.models.ModalResponse.*
 import com.example.walletconnect.ConnectWalletModalDelegate
 import com.walletconnect.web3.modal.client.Modal.Model
 import com.walletconnect.web3.modal.client.Modal.Model.SessionRequestResponse
@@ -21,7 +21,7 @@ class Web3ModalRepository @Inject constructor(
 ) {
     private val scope = CoroutineScope(ioDispatcher)
     private val _disconnectEvents: MutableSharedFlow<ModalResponse> = MutableSharedFlow()
-    val disconnectEvents: SharedFlow<ModalResponse> = _disconnectEvents.asSharedFlow()
+    private val disconnectEvents: SharedFlow<ModalResponse> = _disconnectEvents.asSharedFlow()
 
     suspend fun fetchModalResponse() = flow {
         delegate.events.collect { event ->
@@ -108,7 +108,7 @@ class Web3ModalRepository @Inject constructor(
         }
     }
 
-     fun disconnectUser(): SharedFlow<ModalResponse> {
+    fun disconnectUser(): SharedFlow<ModalResponse> {
         Web3Modal.disconnect(onSuccess = {
             scope.launch {
                 _disconnectEvents.emit(DisconnectSucces)
@@ -118,11 +118,12 @@ class Web3ModalRepository @Inject constructor(
                 _disconnectEvents.emit(Error(throwable))
             }
         })
-
-         return disconnectEvents
+        return disconnectEvents
     }
 
     fun hasAccount(): Boolean {
         return Web3Modal.getAccount() != null
     }
+
+    fun getWalletAddress(): String? = Web3Modal.getAccount()?.address
 }

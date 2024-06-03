@@ -1,4 +1,4 @@
-package com.example.signin.data.models
+package com.example.walletconnect.data.models
 
 import com.walletconnect.android.Core
 import com.walletconnect.web3.modal.client.Modal.Model

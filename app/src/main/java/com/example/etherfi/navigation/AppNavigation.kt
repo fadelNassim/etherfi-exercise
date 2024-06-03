@@ -32,7 +32,11 @@ fun AppNavigation(appPadding: PaddingValues, navController: NavHostController) {
             web3ModalGraph(navController)
         }
         composable(Screen.HomeScreen.route) {
-            HomeScreen(appPadding = appPadding, navController = navController)
+            HomeScreen(appPadding = appPadding, goToSignIn = {
+                navController.navigate(Screen.SignInScreen.route) {
+                    popUpTo("signInGraph") { inclusive = true }
+                }
+            })
         }
     }
 }

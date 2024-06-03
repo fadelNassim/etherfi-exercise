@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.signin.presentation.uistates.WalletConnectUiState
+import com.example.signin.presentation.uistates.SignInUiState
 import com.example.signin.presentation.viewmodels.SignInViewModel
 import com.walletconnect.web3.modal.ui.components.button.AccountButtonType
 import com.walletconnect.web3.modal.ui.components.button.ConnectButtonSize
@@ -26,7 +26,7 @@ fun SignInScreen(
 ) {
     val web3ModalState = rememberWeb3ModalState(navController = navController)
     val viewModel: SignInViewModel = hiltViewModel()
-    val walletConnectState = viewModel.walletConnectState.collectAsState()
+    val signInUiState = viewModel.signInUiState.collectAsState()
 
     Column(
         modifier = Modifier
@@ -36,8 +36,8 @@ fun SignInScreen(
         horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
         verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center
     ) {
-        when (val state = walletConnectState.value) {
-            is WalletConnectUiState.ShowSIWE -> {
+        when (val state = signInUiState.value) {
+            is SignInUiState.ShowSIWE -> {
                 SiweScreen(
                     onCancelClick = {
                         viewModel.resetConnection()
@@ -50,23 +50,23 @@ fun SignInScreen(
                     }
                 )
             }
-            is WalletConnectUiState.ShowConnectWallet -> {
+            is SignInUiState.ShowConnectWallet -> {
                 Web3Button(
                     state = web3ModalState,
                     accountButtonType = AccountButtonType.NORMAL,
                     connectButtonSize = ConnectButtonSize.NORMAL
                 )
             }
-            is WalletConnectUiState.ShowError -> {
+            is SignInUiState.ShowError -> {
                 ErrorScreen(state.reason)
             }
-            is WalletConnectUiState.Loading -> {
+            is SignInUiState.Loading -> {
                 CircularProgressIndicator()
             }
-            is WalletConnectUiState.GoToHomeScreen -> {
+            is SignInUiState.GoToHomeScreen -> {
                 goToHomeScreen()
             }
-            is WalletConnectUiState.ShowTryAgain -> {
+            is SignInUiState.ShowTryAgain -> {
                 TryAgainScreen(state.reason) {
                     viewModel.resetConnection()
                 }
