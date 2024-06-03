@@ -26,15 +26,15 @@ class SiweRepository @Inject constructor(ioDispatcher: CoroutineDispatcher, priv
 
     fun isSiweAuthenticated() = sharedPreferences.getBoolean(IS_SIWE_AUTHENTICATED, false)
     fun clearSiweAuthentication() = sharedPreferences.edit().putBoolean(IS_SIWE_AUTHENTICATED, false).apply()
-    fun authenticate() {
+    fun authenticate(isWrongMessage: Boolean) {
         val authenticateParams = Modal.Params.Authenticate(
-            chains = Web3ModalChainsPresets.ethChains.values.map { it.id },
+            chains = if (isWrongMessage) emptyList() else Web3ModalChainsPresets.ethChains.values.map { it.id },
             domain = "sample.kotlin.dapp",
-            uri = "https://web3inbox.com/all-apps",
-            nonce = randomBytes(12).bytesToHex(),
+            uri = if (isWrongMessage) "" else "https://web3inbox.com/all-apps",
+            nonce = if (isWrongMessage) "" else randomBytes(12).bytesToHex(),
             exp = null,
             nbf = null,
-            statement = "Sign in with wallet.",
+            statement = if (isWrongMessage) "" else "Sign in with wallet.",
             requestId = null,
             resources = listOf(),
             methods = null,

@@ -5,18 +5,21 @@ import com.example.signin.data.repositories.SiweRepository
 import com.example.signin.data.repositories.Web3ModalRepository
 import com.example.signin.domain.entities.ErrorReason.*
 import com.example.signin.domain.entities.ModalResult
-import com.walletconnect.web3.modal.client.Web3Modal
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class GetModalEvents @Inject constructor(private val web3ModalRepository: Web3ModalRepository, private val siweRepository: SiweRepository) {
+class GetModalEvents @Inject constructor(
+    private val web3ModalRepository: Web3ModalRepository,
+    private val siweRepository: SiweRepository
+) {
     private fun handleConnectionAvailable(): ModalResult {
         return when {
-            Web3Modal.hasAccount().not() -> {
+            web3ModalRepository.hasAccount().not() -> {
                 siweRepository.clearSiweAuthentication()
                 ModalResult.UserDisconnected
             }
-            Web3Modal.hasAccount() && siweRepository.isSiweAuthenticated() -> ModalResult.UserConnected
+
+            web3ModalRepository.hasAccount() && siweRepository.isSiweAuthenticated() -> ModalResult.UserConnected
             else -> ModalResult.UserShouldSIWE
         }
     }
@@ -33,9 +36,5 @@ class GetModalEvents @Inject constructor(private val web3ModalRepository: Web3Mo
             is ModalResponse.Error -> ModalResult.Error(reason = GenericError)
             else -> {}
         }
-    }
-
-    private fun Web3Modal.hasAccount(): Boolean {
-        return getAccount() != null
     }
 }

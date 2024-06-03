@@ -2,13 +2,15 @@ package com.example.signin.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.signin.domain.entities.DisconnectUserResult.UserDisconnected
+import com.example.signin.domain.entities.ErrorReason
 import com.example.signin.domain.entities.ModalResult
 import com.example.signin.domain.entities.SiweResult
 import com.example.signin.domain.usecases.AuthenticateSIWE
+import com.example.signin.domain.usecases.DisconnectUser
 import com.example.signin.domain.usecases.GetModalEvents
 import com.example.signin.presentation.uistates.WalletConnectUiState
 import com.example.signin.presentation.uistates.WalletConnectUiState.*
-import com.walletconnect.web3.modal.client.Web3Modal
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,18 +22,25 @@ import javax.inject.Inject
 class SignInViewModel @Inject constructor(
     private val getModalEvents: GetModalEvents,
     private val authenticateSIWE: AuthenticateSIWE,
-    private val ioDispatcher: CoroutineDispatcher) : ViewModel() {
+    private val disconnectUser: DisconnectUser,
+    private val ioDispatcher: CoroutineDispatcher
+) : ViewModel() {
     private val _walletConnectState = MutableStateFlow<WalletConnectUiState>(NoState)
     val walletConnectState: StateFlow<WalletConnectUiState> = _walletConnectState
 
-    init { getModalEvents() }
+    init {
+        getModalEvents()
+    }
 
     private fun getModalEvents() = viewModelScope.launch(ioDispatcher) {
         _walletConnectState.value = Loading
         getModalEvents.invoke().collect { result ->
-            _walletConnectState.value  = when (result) {
-                 ModalResult.UserShouldSIWE -> ShowSIWE
-                is ModalResult.UserConnected -> {GoToHomeScreen}
+            _walletConnectState.value = when (result) {
+                ModalResult.UserShouldSIWE -> ShowSIWE
+                is ModalResult.UserConnected -> {
+                    GoToHomeScreen
+                }
+
                 is ModalResult.UserDisconnected -> ShowConnectWallet
                 is ModalResult.Error -> ShowError(result.reason)
                 else -> NoState
@@ -39,29 +48,28 @@ class SignInViewModel @Inject constructor(
         }
     }
 
-    fun swieButtonClicked() = viewModelScope.launch(ioDispatcher) {
-         _walletConnectState.value = Loading
-         authenticateSIWE.invoke().collect {siweResult ->
+    private fun collectSiweResult(isWrongMessage: Boolean = false) =
+        viewModelScope.launch(ioDispatcher) {
+            _walletConnectState.value = Loading
+            authenticateSIWE.invoke(isWrongMessage).collect { siweResult ->
                 _walletConnectState.value = when (siweResult) {
                     is SiweResult.Success -> GoToHomeScreen
-                    is SiweResult.Error -> ShowError(siweResult.message)
+                    is SiweResult.Error -> ShowTryAgain(siweResult.message)
                 }
-         }
-    }
+            }
+        }
 
-    fun siweCancel() = viewModelScope.launch(ioDispatcher) {
-            _walletConnectState.value = Loading
-            Web3Modal.disconnect(
-                onSuccess = {
-                    viewModelScope.launch {
-                        _walletConnectState.emit(
-                            ShowConnectWallet
-                        )
-                    }
-                },
-                onError = { throwable: Throwable ->
-                    println("USER DISCONNECT ERROR: ${throwable.message}")
-                }
-            )
+    fun swieButtonClicked() = collectSiweResult()
+
+    fun siweWrongMessageButtonClicked() = collectSiweResult(isWrongMessage = true)
+
+    fun resetConnection() = viewModelScope.launch(ioDispatcher) {
+        _walletConnectState.value = Loading
+        disconnectUser.invoke().collect { result ->
+            _walletConnectState.value = when (result) {
+                UserDisconnected -> ShowConnectWallet
+                else -> ShowError(ErrorReason.GenericError)
+            }
+        }
     }
 }

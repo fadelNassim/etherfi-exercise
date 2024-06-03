@@ -7,4 +7,8 @@
     <string name="deleted_session_error">Session deleted, please try again later.</string>
     <string name="rejected_session">Session rejected, please try again later.</string>
     <string name="connection_not_available">Connection not available. Check your internet connection and try again.</string>
+    <string name="siwe_button">Sign In with Ethereum</string>
+    <string name="siwe_wrong_message_button">Sign In with Ethereum (Wrong Message)</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="try_again_button">Try again</string>
 </resources>

@@ -9,13 +9,13 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class AuthenticateSIWE @Inject constructor(private val repository: SiweRepository) {
-     fun invoke(): Flow<SiweResult> {
-         repository.authenticate()
+    fun invoke(isWrongMessage: Boolean): Flow<SiweResult> {
+        repository.authenticate(isWrongMessage)
         return repository.result.map {
             when (it) {
                 is SiweResponse.Success -> SiweResult.Success(message = it.message)
-                is SiweResponse.Error -> SiweResult.Error(message =  ErrorReason.FailedSiweAuthenticate)
+                is SiweResponse.Error -> SiweResult.Error(message = ErrorReason.FailedSiweAuthenticate)
             }
         }
-     }
+    }
 }

@@ -12,7 +12,7 @@ import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
 @HiltAndroidApp
-class EtherfiApplication: Application() {
+class EtherfiApplication : Application() {
     @Inject
     lateinit var web3ModalModalDelegate: ConnectWalletModalDelegate
 
@@ -34,9 +34,8 @@ class EtherfiApplication: Application() {
         )
     }
 
-    override fun onCreate() {
-        super.onCreate()
-        val connectionType =  ConnectionType.AUTOMATIC
+    fun setupCoreClient() {
+        val connectionType = ConnectionType.AUTOMATIC
         val projectId = "6df9221c03aa9df8f02c5fdf1a50d235"
         val relayUrl = "relay.walletconnect.com"
         val serverUrl = "wss://$relayUrl?projectId=${projectId}"
@@ -48,9 +47,19 @@ class EtherfiApplication: Application() {
             redirect = "kotlin-web3modal://request"
         )
 
-        CoreClient.initialize(relayServerUrl = serverUrl, connectionType = connectionType, application = this, metaData = appMetaData, onError = {
-            println("CoreClient Error: $it")
-        })
+        CoreClient.initialize(
+            relayServerUrl = serverUrl,
+            connectionType = connectionType,
+            application = this,
+            metaData = appMetaData,
+            onError = {
+                println("CoreClient Error: $it")
+            })
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        setupCoreClient()
         setupModal()
     }
 }

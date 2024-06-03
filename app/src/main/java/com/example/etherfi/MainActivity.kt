@@ -9,7 +9,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.rememberModalBottomSheetState
-import androidx.compose.material3.Scaffold
+import androidx.compose.material.Scaffold
 import androidx.navigation.compose.rememberNavController
 import com.example.etherfi.navigation.AppNavigation
 import com.google.accompanist.navigation.material.BottomSheetNavigator
@@ -26,13 +26,15 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val modalSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden, skipHalfExpanded = true)
+            val modalSheetState = rememberModalBottomSheetState(
+                initialValue = ModalBottomSheetValue.Hidden,
+                skipHalfExpanded = true
+            )
             val bottomSheetNavigator = BottomSheetNavigator(modalSheetState)
             val navController = rememberNavController(bottomSheetNavigator)
             Scaffold(
                 topBar = { TopAppBar(title = { Message.Text("Etherfi") }) },
-            ) {
-                appPadding ->
+            ) { appPadding ->
                 ModalBottomSheetLayout(bottomSheetNavigator = bottomSheetNavigator) {
                     AppNavigation(appPadding = appPadding, navController = navController)
                 }

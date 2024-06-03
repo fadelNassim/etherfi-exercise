@@ -11,10 +11,10 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
-class ConnectWalletModalDelegate (dispatcher: CoroutineDispatcher) : ModalDelegate {
+class ConnectWalletModalDelegate(dispatcher: CoroutineDispatcher) : ModalDelegate {
     private val scope = CoroutineScope(dispatcher)
     private val _events: MutableSharedFlow<Model> = MutableSharedFlow()
-    val event: SharedFlow<Model> = _events.asSharedFlow()
+    val events: SharedFlow<Model> = _events.asSharedFlow()
 
     init {
         Web3Modal.setDelegate(this)
@@ -22,80 +22,80 @@ class ConnectWalletModalDelegate (dispatcher: CoroutineDispatcher) : ModalDelega
 
     override fun onSessionApproved(approvedSession: ApprovedSession) {
         scope.launch {
-           _events.emit(approvedSession)
+            _events.emit(approvedSession)
         }
     }
 
     override fun onSessionRejected(rejectedSession: RejectedSession) {
         scope.launch {
-           _events.emit(rejectedSession)
+            _events.emit(rejectedSession)
         }
     }
 
     override fun onSessionUpdate(updatedSession: UpdatedSession) {
         scope.launch {
-           _events.emit(updatedSession)
+            _events.emit(updatedSession)
         }
     }
 
     override fun onSessionEvent(sessionEvent: SessionEvent) {
         scope.launch {
-           _events.emit(sessionEvent)
+            _events.emit(sessionEvent)
         }
     }
 
     override fun onSessionEvent(sessionEvent: Event) {
         scope.launch {
-           _events.emit(sessionEvent)
+            _events.emit(sessionEvent)
         }
     }
 
     override fun onSessionDelete(deletedSession: DeletedSession) {
         scope.launch {
-           _events.emit(deletedSession)
+            _events.emit(deletedSession)
         }
     }
 
     override fun onSessionExtend(session: Session) {
         scope.launch {
-           _events.emit(session)
+            _events.emit(session)
         }
     }
 
     override fun onSessionRequestResponse(response: SessionRequestResponse) {
         scope.launch {
-           _events.emit(response)
+            _events.emit(response)
         }
     }
 
     override fun onSessionAuthenticateResponse(sessionUpdateResponse: SessionAuthenticateResponse) {
         scope.launch {
-           _events.emit(sessionUpdateResponse)
+            _events.emit(sessionUpdateResponse)
         }
     }
 
     override fun onProposalExpired(proposal: ExpiredProposal) {
         scope.launch {
-           _events.emit(proposal)
+            _events.emit(proposal)
         }
     }
 
     override fun onRequestExpired(request: ExpiredRequest) {
         scope.launch {
-           _events.emit(request)
+            _events.emit(request)
         }
     }
 
     override fun onConnectionStateChange(state: ConnectionState) {
         scope.launch {
-           _events.emit(state)
+            _events.emit(state)
         }
     }
 
     override fun onError(error: Error) {
         println(error.throwable.stackTraceToString())
         scope.launch {
-           _events.emit(error)
+            _events.emit(error)
         }
     }
 }
