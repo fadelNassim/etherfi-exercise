@@ -3,6 +3,7 @@ package com.example.home.presentation.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.home.domain.usecases.GetWalletAddress
+import com.example.walletconnect.usecases.usecases.IsNetworkAvailable
 import com.example.home.presentation.uistates.HomeUiState
 import com.example.home.presentation.uistates.HomeUiState.*
 import com.example.walletconnect.usecases.entities.DisconnectUserResult
@@ -17,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val disconnectUser: DisconnectUser,
-    getWalletAddress: GetWalletAddress,
+    private val getWalletAddress: GetWalletAddress,
+    private val isNetworkAvailable: IsNetworkAvailable,
     private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
     private val _homeUiState =
@@ -26,10 +28,14 @@ class HomeViewModel @Inject constructor(
 
     fun onDisconnectClick() = viewModelScope.launch(ioDispatcher) {
         _homeUiState.value = Loading
-        disconnectUser.invoke().collect { result ->
-            _homeUiState.value = when (result) {
-                DisconnectUserResult.UserDisconnected -> GoToSignIn
-                else -> ShowTryAgain
+        if (isNetworkAvailable.invoke().not()) {
+            _homeUiState.value = ShowTryAgain
+        } else {
+            disconnectUser.invoke().collect { result ->
+                _homeUiState.value = when (result) {
+                    DisconnectUserResult.UserDisconnected -> GoToSignIn
+                    else -> ShowTryAgain
+                }
             }
         }
     }

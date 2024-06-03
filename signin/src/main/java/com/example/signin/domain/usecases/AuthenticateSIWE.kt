@@ -1,7 +1,7 @@
 package com.example.signin.domain.usecases
 
-import com.example.signin.data.models.SiweResponse
-import com.example.signin.data.repositories.SiweRepository
+import com.example.walletconnect.data.models.SiweResponse
+import com.example.walletconnect.data.repositories.SiweRepository
 import com.example.signin.domain.entities.ErrorReason
 import com.example.signin.domain.entities.SiweResult
 import kotlinx.coroutines.flow.Flow

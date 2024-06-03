@@ -11,6 +11,7 @@ import com.example.walletconnect.usecases.usecases.DisconnectUser
 import com.example.signin.domain.usecases.GetModalEvents
 import com.example.signin.presentation.uistates.SignInUiState
 import com.example.signin.presentation.uistates.SignInUiState.*
+import com.example.walletconnect.usecases.usecases.IsNetworkAvailable
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,13 +24,19 @@ class SignInViewModel @Inject constructor(
     private val getModalEvents: GetModalEvents,
     private val authenticateSIWE: AuthenticateSIWE,
     private val disconnectUser: DisconnectUser,
-    private val ioDispatcher: CoroutineDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
+    private val isNetworkAvailable: IsNetworkAvailable
 ) : ViewModel() {
     private val _signInUiState = MutableStateFlow<SignInUiState>(NoState)
     val signInUiState: StateFlow<SignInUiState> = _signInUiState
 
     init {
-        getModalEvents()
+       tryListenToModal()
+    }
+
+    fun tryListenToModal() {
+        if (isNetworkAvailable.invoke()) { getModalEvents() }
+        else { _signInUiState.value = ShowTryAgain(ErrorReason.ConnectionNotAvailable) }
     }
 
     private fun getModalEvents() = viewModelScope.launch(ioDispatcher) {
@@ -62,13 +69,25 @@ class SignInViewModel @Inject constructor(
 
     fun siweWrongMessageButtonClicked() = collectSiweResult(isWrongMessage = true)
 
-    fun resetConnection() = viewModelScope.launch(ioDispatcher) {
-        _signInUiState.value = Loading
-        disconnectUser.invoke().collect { result ->
-            _signInUiState.value = when (result) {
-                UserDisconnected -> ShowConnectWallet
-                else -> ShowError(ErrorReason.GenericError)
+    fun tryResetConnection() = viewModelScope.launch(ioDispatcher) {
+        if (isNetworkAvailable.invoke()) {
+            _signInUiState.value = Loading
+            disconnectUser.invoke().collect { result ->
+                _signInUiState.value = when (result) {
+                    UserDisconnected -> ShowConnectWallet
+                    else -> ShowError(ErrorReason.GenericError)
+                }
             }
+        } else {
+            _signInUiState.value = ShowTryAgain(ErrorReason.ConnectionNotAvailable)
+        }
+    }
+
+    fun onTryAgainClicked(reason: ErrorReason) {
+        if (reason == ErrorReason.FailedSiweAuthenticate) {
+           tryResetConnection()
+        } else {
+            tryListenToModal()
         }
     }
 }

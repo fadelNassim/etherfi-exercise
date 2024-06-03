@@ -40,7 +40,7 @@ fun SignInScreen(
             is SignInUiState.ShowSIWE -> {
                 SiweScreen(
                     onCancelClick = {
-                        viewModel.resetConnection()
+                        viewModel.tryResetConnection()
                     },
                     onSiweClick = {
                         viewModel.swieButtonClicked()
@@ -68,7 +68,7 @@ fun SignInScreen(
             }
             is SignInUiState.ShowTryAgain -> {
                 TryAgainScreen(state.reason) {
-                    viewModel.resetConnection()
+                    viewModel.onTryAgainClicked(state.reason)
                 }
             }
             else -> {}

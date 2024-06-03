@@ -1,7 +1,7 @@
 package com.example.signin.domain.usecases
 
 import com.example.walletconnect.data.models.ModalResponse
-import com.example.signin.data.repositories.SiweRepository
+import com.example.walletconnect.data.repositories.SiweRepository
 import com.example.walletconnect.data.repositories.Web3ModalRepository
 import com.example.signin.domain.entities.ErrorReason.*
 import com.example.signin.domain.entities.ModalResult

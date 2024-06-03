@@ -1,4 +1,4 @@
-package com.example.signin.data.models
+package com.example.walletconnect.data.models
 
 sealed class SiweResponse {
     data class Success(val message: String) : SiweResponse()

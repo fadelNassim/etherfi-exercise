@@ -17,6 +17,10 @@ fun TryAgainScreen(errorReason: ErrorReason, onClick: () -> Unit) {
                 Text(text = stringResource(id = R.string.session_siwe_auth_error))
             }
 
+            ErrorReason.ConnectionNotAvailable -> {
+                Text(text = stringResource(id = R.string.connection_not_available))
+            }
+
             else -> {}
         }
         Button(onClick = { onClick() }) {

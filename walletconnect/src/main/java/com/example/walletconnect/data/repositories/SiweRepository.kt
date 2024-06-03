@@ -1,7 +1,7 @@
-package com.example.signin.data.repositories
+package com.example.walletconnect.data.repositories
 
 import android.content.SharedPreferences
-import com.example.signin.data.models.SiweResponse
+import com.example.walletconnect.data.models.SiweResponse
 import com.walletconnect.web3.modal.client.Modal
 import com.walletconnect.web3.modal.client.Web3Modal
 import kotlinx.coroutines.CoroutineDispatcher
@@ -32,22 +32,23 @@ class SiweRepository @Inject constructor(
         sharedPreferences.edit().putBoolean(IS_SIWE_AUTHENTICATED, false).apply()
 
     fun authenticate(isWrongMessage: Boolean) {
-        val authenticateParams = if (isWrongMessage) wrongSiweAuthenticateParams else correctSiweAuthenticateParams
-            Web3Modal.authenticate(authenticateParams, onError = { error ->
-                println(error.throwable.message ?: AUTH_UNKNOWN_ERROR_MESSAGE)
-                scope.launch {
-                    _result.emit(
-                        SiweResponse.Error(
-                            message = error.throwable.message ?: AUTH_UNKNOWN_ERROR_MESSAGE
-                        )
+        val authenticateParams =
+            if (isWrongMessage) wrongSiweAuthenticateParams else correctSiweAuthenticateParams
+        Web3Modal.authenticate(authenticateParams, onError = { error ->
+            println(error.throwable.message ?: AUTH_UNKNOWN_ERROR_MESSAGE)
+            scope.launch {
+                _result.emit(
+                    SiweResponse.Error(
+                        message = error.throwable.message ?: AUTH_UNKNOWN_ERROR_MESSAGE
                     )
-                }
-            }, onSuccess = { response ->
-                sharedPreferences.edit().putBoolean(IS_SIWE_AUTHENTICATED, true).apply()
-                println(response)
-                scope.launch {
-                    _result.emit(SiweResponse.Success(message = response))
-                }
-            })
+                )
+            }
+        }, onSuccess = { response ->
+            sharedPreferences.edit().putBoolean(IS_SIWE_AUTHENTICATED, true).apply()
+            println(response)
+            scope.launch {
+                _result.emit(SiweResponse.Success(message = response))
+            }
+        })
     }
 }

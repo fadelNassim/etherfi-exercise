@@ -1,5 +1,7 @@
 package com.example.walletconnect.data.repositories
 
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import com.example.walletconnect.data.models.ModalResponse
 import com.example.walletconnect.data.models.ModalResponse.*
 import com.example.walletconnect.ConnectWalletModalDelegate
@@ -17,7 +19,8 @@ import javax.inject.Inject
 
 class Web3ModalRepository @Inject constructor(
     private val delegate: ConnectWalletModalDelegate,
-    ioDispatcher: CoroutineDispatcher
+    ioDispatcher: CoroutineDispatcher,
+    private val connectivityManager: ConnectivityManager
 ) {
     private val scope = CoroutineScope(ioDispatcher)
     private val _disconnectEvents: MutableSharedFlow<ModalResponse> = MutableSharedFlow()
@@ -114,11 +117,19 @@ class Web3ModalRepository @Inject constructor(
                 _disconnectEvents.emit(DisconnectSucces)
             }
         }, onError = { throwable: Throwable ->
+            println("Error: $throwable")
             scope.launch {
                 _disconnectEvents.emit(Error(throwable))
             }
         })
         return disconnectEvents
+    }
+
+    fun isNetworkAvailable(): Boolean {
+        val activeNetwork = connectivityManager.activeNetwork ?: return false
+        val networkCapabilities =
+            connectivityManager.getNetworkCapabilities(activeNetwork) ?: return false
+        return networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
 
     fun hasAccount(): Boolean {
