@@ -26,8 +26,8 @@ class SignInViewModel @Inject constructor(
     private val getUserSession: GetUserSession,
     private val authenticateSIWE: AuthenticateSIWE,
     private val disconnectUser: DisconnectUser,
+    private val isNetworkAvailable: IsNetworkAvailable,
     private val ioDispatcher: CoroutineDispatcher,
-    private val isNetworkAvailable: IsNetworkAvailable
 ) : ViewModel() {
     private val _signInUiState = MutableStateFlow<SignInUiState>(NoState)
     val signInUiState: StateFlow<SignInUiState> = _signInUiState
@@ -38,13 +38,13 @@ class SignInViewModel @Inject constructor(
 
     private fun tryListenToModal() {
         if (isNetworkAvailable.invoke()) {
-            handleRedirecWhenNetworkAvailable()
+            handleRedirectWhenNetworkAvailable()
         } else {
             _signInUiState.value = ShowTryAgain(ErrorReason.ConnectionNotAvailable)
         }
     }
 
-    private fun handleRedirecWhenNetworkAvailable() {
+    private fun handleRedirectWhenNetworkAvailable() {
         when {
             getUserSession.isUserSIWEAuthenticated() && getUserSession.isUserWalletConnected() -> _signInUiState.value =
                 GoToHomeScreen
