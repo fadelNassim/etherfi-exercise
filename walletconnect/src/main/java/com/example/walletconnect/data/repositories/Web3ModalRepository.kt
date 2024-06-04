@@ -23,8 +23,7 @@ class Web3ModalRepository @Inject constructor(
     private val connectivityManager: ConnectivityManager
 ) {
     private val scope = CoroutineScope(ioDispatcher)
-    private val _disconnectEvents: MutableSharedFlow<ModalResponse> = MutableSharedFlow()
-    private val disconnectEvents: SharedFlow<ModalResponse> = _disconnectEvents.asSharedFlow()
+    private val disconnectEvents: MutableSharedFlow<ModalResponse> = MutableSharedFlow()
 
     suspend fun fetchModalResponse() = flow {
         delegate.events.collect { event ->
@@ -114,12 +113,12 @@ class Web3ModalRepository @Inject constructor(
     fun disconnectUser(): SharedFlow<ModalResponse> {
         Web3Modal.disconnect(onSuccess = {
             scope.launch {
-                _disconnectEvents.emit(DisconnectSucces)
+                disconnectEvents.emit(DisconnectSucces)
             }
         }, onError = { throwable: Throwable ->
             println("Error: $throwable")
             scope.launch {
-                _disconnectEvents.emit(Error(throwable))
+                disconnectEvents.emit(Error(throwable))
             }
         })
         return disconnectEvents
