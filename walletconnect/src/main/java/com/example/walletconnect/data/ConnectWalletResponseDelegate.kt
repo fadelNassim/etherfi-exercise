@@ -16,10 +16,6 @@ class ConnectWalletModalDelegate(dispatcher: CoroutineDispatcher) : ModalDelegat
     private val _events: MutableSharedFlow<Model> = MutableSharedFlow()
     val events: SharedFlow<Model> = _events.asSharedFlow()
 
-    init {
-        Web3Modal.setDelegate(this)
-    }
-
     override fun onSessionApproved(approvedSession: ApprovedSession) {
         scope.launch {
             _events.emit(approvedSession)
