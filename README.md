@@ -8,7 +8,7 @@ This project uses an architecture based on the MVVM (Model-View-ViewModel) patte
 
 ### Model
 
-The model represents the data and business logic of the application. In this project, the model is represented by the `SiweResult`, `DisconnectUserResult`, `ModalResult`, `SessionAuthenticateResult` classes. These classes are used to represent the application's data.
+The model represents the data and business logic of the application. In this project, the model is represented by the `SiweResult`, `DisconnectUserResult`, `ModalResult` classes. These classes are used to represent the application's data.
 
 ### View
 
