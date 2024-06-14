@@ -39,3 +39,5 @@ Coroutines are used to manage asynchronous operations in the application. They a
 ### Flow and MutableStateFlow
 
 `Flow` is used to handle asynchronous operations, and `MutableStateFlow` is used to represent and update the user interface state. Together, they enable efficient management of asynchronous operations and user interface state in the application.
+
+### END
